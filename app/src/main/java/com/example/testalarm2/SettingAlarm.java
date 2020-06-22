@@ -72,14 +72,13 @@ public class SettingAlarm extends MainActivity {
 
         findViewById(R.id.btnset).setOnClickListener(onClickListener);
         findViewById(R.id.btncancel).setOnClickListener(oncancelClickListener);
-
+        alarmInit();
 
     }
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if(v.getId() ==R.id.btnset){
-                uploader();
                 setAlarm();
                 myStartActivity(MainActivity.class);
             }
@@ -96,12 +95,14 @@ public class SettingAlarm extends MainActivity {
     };
 
 
-    private void setAlarm(){
+    private void setAlarm(){//알림 설정
 
         hourtime = timePicker.getCurrentHour().toString();
         minutetime = timePicker.getCurrentMinute().toString();
         notificationText = drugEditText.getText().toString();
 
+        //uploader(alarmInfo2);
+        uploader(alarmInfo2);
         final String timetimes = hourtime+minutetime;
 
         int hourtext = Integer.parseInt(hourtime);
@@ -114,8 +115,10 @@ public class SettingAlarm extends MainActivity {
             ampmtext="오전";
         }
 
+        //AlarmInfo alarmInfo = new AlarmInfo(hourtime,minutetime,ampmtext,notificationText);
 
-     /*   firebaseFirestore = FirebaseFirestore.getInstance();
+
+        /*   firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("AlarmDemo").get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -174,8 +177,6 @@ public class SettingAlarm extends MainActivity {
                                     Log.e("확인확인", notificationId);
 
                                     Intent intent = new Intent(getApplicationContext(), AlarmReceiver.class);
-
-
                                     intent.putExtra("drug",firedrugtext);
                                     intent.putExtra("id", notificationId);
 
@@ -251,13 +252,15 @@ public class SettingAlarm extends MainActivity {
         }*/
     //}
     //저장 버튼을 누르면 hour,minute,drugtext를 파이어베이스에 넘어감
-    private void uploader() {
+    private void uploader(AlarmInfo alarmInfo) {
 
         TimePicker timePicker = (TimePicker) findViewById(R.id.timepicker);
         TextView textView = (TextView) findViewById(R.id.ampmText);
-        final String hour = timePicker.getCurrentHour().toString();
-        final String minute = timePicker.getCurrentMinute().toString();
-        final String drugText = ((EditText) findViewById(R.id.editText)).getText().toString();
+        final String hour = alarmInfo.getHour();
+        final String minute = alarmInfo.getMinute();
+        final String drugText = alarmInfo.getDrugText();
+        String apm = alarmInfo.getAmpm();
+
 
         String times = hour+minute;
 
@@ -284,8 +287,10 @@ public class SettingAlarm extends MainActivity {
                 realTime= String.valueOf(hourtest);
             }
 
+
             if(hourtest<10){
                 hourtext = " "+realTime+":";
+
             }else{
                 hourtext=realTime+":";
             }
@@ -308,20 +313,26 @@ public class SettingAlarm extends MainActivity {
 
             final String ampmText = ampm;
 
-
             firebaseFirestore = FirebaseFirestore.getInstance();
 
       /*  final DocumentReference documentReference = alarmInfo2 == null ? firebaseFirestore.collection("AlarmDemo").document(times)
                 : firebaseFirestore.collection("AlarmDemo").document(alarmInfo2.getId());*/
-          final Map<String, Object> mData = new HashMap<>();
+          /*
+      final Map<String, Object> mData = new HashMap<>();
           mData.put("hour", hourtext);
           mData.put("minute", minutetext);
-          mData.put("drugtext", drugText);
-          mData.put("ampm", ampmText);
+          mData.put("drugtext", drugEditText);
+          mData.put("ampm", ampm);
           mData.put("times",times);
 
-          firebaseFirestore.collection("AlarmDemo").document(times)
-                  .set(mData)
+           */
+
+            final DocumentReference documentReference = alarmInfo ==null? firebaseFirestore.collection("AlarmDemo").document()
+                    :firebaseFirestore.collection("AlarmDemo").document(times);
+
+            //Log.e("log : ",alarmInfo.getId().toString());
+            documentReference
+                  .set(alarmInfo.getAlarmInfo())
                   .addOnCompleteListener(new OnCompleteListener<Void>() {
                       @Override
                       public void onComplete(@NonNull Task<Void> task) {
@@ -335,26 +346,16 @@ public class SettingAlarm extends MainActivity {
           });
 
 
-
-    /*    documentReference.set(alarmInfo.getAlarmInfo())
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Log.d(TAG,"id");
-                        finish();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG,"ERROR",e);
-                    }
-                });*/
         }
     }
-
+    private void alarmInit (){//수정버튼을 눌렀을 때 그 전의 값들을 넣어주는 역할을 함
+        if(alarmInfo2 !=null){
+            drugEditText.setText(alarmInfo2.getDrugText());
+        }
+    }
     private void myStartActivity(Class c){
         Intent intent = new Intent(this,c);
         startActivityForResult(intent,1);
     }
+
 }

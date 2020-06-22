@@ -1,11 +1,15 @@
 package com.example.testalarm2;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,9 +21,16 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
+import listener.OnAlarmListener;
+
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private ArrayList<AlarmInfo> mDataset;
     private Activity activity;
+    private OnAlarmListener onAlarmListener;
+    private Button modifybtn;
+    private Button deletebtn;
+
+    private Context context;
 
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
@@ -33,6 +44,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         return position;
     }
 
+    public void setOnAlarmListener(OnAlarmListener onAlarmListener){
+        this.onAlarmListener = onAlarmListener;
+    }
     MyAdapter(Activity activity, ArrayList<AlarmInfo> mDataset){
         this.mDataset = mDataset;
         this.activity = activity;
@@ -40,25 +54,19 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     @NonNull
     @Override
-    public MyAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MyAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, final int viewType) {
 
         CardView cardView = (CardView) LayoutInflater.from(parent.getContext()).inflate(R.layout.item_alarm, parent, false);
         final MyViewHolder myViewHolder = new MyViewHolder(activity, cardView, mDataset.get(viewType));
 
-        cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(activity, SettingAlarm.class);
-                intent.putExtra("alarmInfo",mDataset.get(myViewHolder.getAdapterPosition()));
-                //Toast.makeText(v.getContext(),mDataset.get(myViewHolder.getAdapterPosition())+"",Toast.LENGTH_LONG).show();
-                activity.startActivity(intent);
-            }
-        });
+        //
+
+
         return myViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyAdapter.MyViewHolder holder, final int position) {
 
         CardView cardView = holder.cardView;
         TextView hourText = cardView.findViewById(R.id.hourText);
@@ -80,12 +88,35 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         ampmText.setText(mDataset.get(position).getAmpm());
         Log.e("getAmpm", mDataset.get(position).getAmpm());
 
+        modifybtn = cardView.findViewById(R.id.modifybtn);
+        deletebtn = cardView.findViewById(R.id.deletebtn);
+
+
+
+        modifybtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onAlarmListener.onModify(position);
+            }
+        });
+        deletebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onAlarmListener.onDelete(position);
+            }
+        });
+        //modifybtn = cardView.findViewById(R.id.modifybtn);
+        //deletebtn = cardView.findViewById(R.id.deletebtn);
     }
 
     @Override
     public int getItemCount() {
         return (mDataset !=null ? mDataset.size() :0);
     }
-
-
+    private void myStartActivity (Class c, AlarmInfo alarmInfo){//intent를 이용하여 id 값을 전달해줄것임.
+        Intent intent = new Intent(activity, c);
+        intent.putExtra("alarmInfo", alarmInfo);//앞에는 key값, 뒤에는 실제 값
+        //id값을 보내주면 WritePostActivity에서 받아서 쓸것임
+        activity.startActivity(intent);
+    }
 }
