@@ -40,13 +40,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             cardView = v;
         }
     }
-    public int getItemViewType(int position){
+  /*  public int getItemViewType(int position){
         return position;
-    }
+    }*/
 
-    public void setOnAlarmListener(OnAlarmListener onAlarmListener){
+  /*  public void setOnAlarmListener(OnAlarmListener onAlarmListener){
         this.onAlarmListener = onAlarmListener;
-    }
+    }*/
     MyAdapter(Activity activity, ArrayList<AlarmInfo> mDataset){
         this.mDataset = mDataset;
         this.activity = activity;
@@ -93,7 +93,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
 
 
-        modifybtn.setOnClickListener(new View.OnClickListener() {
+      /*  modifybtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onAlarmListener.onModify(position);
@@ -104,7 +104,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             public void onClick(View v) {
                 onAlarmListener.onDelete(position);
             }
-        });
+        });*/
         //modifybtn = cardView.findViewById(R.id.modifybtn);
         //deletebtn = cardView.findViewById(R.id.deletebtn);
     }
@@ -113,10 +113,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public int getItemCount() {
         return (mDataset !=null ? mDataset.size() :0);
     }
-    private void myStartActivity (Class c, AlarmInfo alarmInfo){//intent를 이용하여 id 값을 전달해줄것임.
+   /* private void myStartActivity (Class c, AlarmInfo alarmInfo){//intent를 이용하여 id 값을 전달해줄것임.
         Intent intent = new Intent(activity, c);
         intent.putExtra("alarmInfo", alarmInfo);//앞에는 key값, 뒤에는 실제 값
         //id값을 보내주면 WritePostActivity에서 받아서 쓸것임
         activity.startActivity(intent);
-    }
+    }*/
 }

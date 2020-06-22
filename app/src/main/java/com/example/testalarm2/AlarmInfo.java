@@ -37,7 +37,7 @@ public class AlarmInfo implements Serializable {
         //this.notificationId = notificationId;
     }
 
-   public Map<String,Object> getAlarmInfo(){
+  /* public Map<String,Object> getAlarmInfo(){
         Map<String, Object> mData = new HashMap<>();
        // mData.put("times",times);
         mData.put("drugtext",drugText);
@@ -48,7 +48,7 @@ public class AlarmInfo implements Serializable {
         //mData.put("documentID", documentId);
         //mData.put("notificationId",id);
         return mData;
-    }
+    }*/
 
    public String  getHour() {
        return hour;

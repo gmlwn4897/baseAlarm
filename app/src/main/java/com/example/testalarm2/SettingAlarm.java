@@ -72,13 +72,14 @@ public class SettingAlarm extends MainActivity {
 
         findViewById(R.id.btnset).setOnClickListener(onClickListener);
         findViewById(R.id.btncancel).setOnClickListener(oncancelClickListener);
-        alarmInit();
+        //alarmInit();
 
     }
     View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if(v.getId() ==R.id.btnset){
+                uploader();
                 setAlarm();
                 myStartActivity(MainActivity.class);
             }
@@ -102,7 +103,7 @@ public class SettingAlarm extends MainActivity {
         notificationText = drugEditText.getText().toString();
 
         //uploader(alarmInfo2);
-        uploader(alarmInfo2);
+        //uploader(alarmInfo2);
         final String timetimes = hourtime+minutetime;
 
         int hourtext = Integer.parseInt(hourtime);
@@ -252,14 +253,17 @@ public class SettingAlarm extends MainActivity {
         }*/
     //}
     //저장 버튼을 누르면 hour,minute,drugtext를 파이어베이스에 넘어감
-    private void uploader(AlarmInfo alarmInfo) {
+    private void uploader() {
 
         TimePicker timePicker = (TimePicker) findViewById(R.id.timepicker);
         TextView textView = (TextView) findViewById(R.id.ampmText);
-        final String hour = alarmInfo.getHour();
+       /* final String hour = alarmInfo.getHour();
         final String minute = alarmInfo.getMinute();
-        final String drugText = alarmInfo.getDrugText();
-        String apm = alarmInfo.getAmpm();
+        final String drugText = alarmInfo.getDrugText();*/
+       final String hour = timePicker.getCurrentHour().toString();
+       final String minute = timePicker.getCurrentMinute().toString();
+       final String drugText = drugEditText.getText().toString();
+        //String apm = alarmInfo.getAmpm();
 
 
         String times = hour+minute;
@@ -317,21 +321,20 @@ public class SettingAlarm extends MainActivity {
 
       /*  final DocumentReference documentReference = alarmInfo2 == null ? firebaseFirestore.collection("AlarmDemo").document(times)
                 : firebaseFirestore.collection("AlarmDemo").document(alarmInfo2.getId());*/
-          /*
+
       final Map<String, Object> mData = new HashMap<>();
           mData.put("hour", hourtext);
           mData.put("minute", minutetext);
-          mData.put("drugtext", drugEditText);
-          mData.put("ampm", ampm);
+          mData.put("drugtext", drugText);
+          mData.put("ampm", ampmText);
           mData.put("times",times);
 
-           */
 
-            final DocumentReference documentReference = alarmInfo ==null? firebaseFirestore.collection("AlarmDemo").document()
-                    :firebaseFirestore.collection("AlarmDemo").document(times);
+         /*   final DocumentReference documentReference = alarmInfo ==null? firebaseFirestore.collection("AlarmDemo").document()
+                    :firebaseFirestore.collection("AlarmDemo").document(times);*/
 
             //Log.e("log : ",alarmInfo.getId().toString());
-            documentReference
+          /*  documentReference
                   .set(alarmInfo.getAlarmInfo())
                   .addOnCompleteListener(new OnCompleteListener<Void>() {
                       @Override
@@ -345,14 +348,28 @@ public class SettingAlarm extends MainActivity {
               }
           });
 
+           */
+          firebaseFirestore.collection("AlarmDemo").document(times)
+                  .set(mData)
+                  .addOnSuccessListener(new OnSuccessListener<Void>() {
+                      @Override
+                      public void onSuccess(Void aVoid) {
+                          Log.e(TAG,"데이터베이스에 알림저장");
+                      }
+                  }).addOnFailureListener(new OnFailureListener() {
+              @Override
+              public void onFailure(@NonNull Exception e) {
+                  Log.e(TAG,"알림저장 실패");
+              }
+          });
 
         }
     }
-    private void alarmInit (){//수정버튼을 눌렀을 때 그 전의 값들을 넣어주는 역할을 함
+   /* private void alarmInit (){//수정버튼을 눌렀을 때 그 전의 값들을 넣어주는 역할을 함
         if(alarmInfo2 !=null){
             drugEditText.setText(alarmInfo2.getDrugText());
         }
-    }
+    }*/
     private void myStartActivity(Class c){
         Intent intent = new Intent(this,c);
         startActivityForResult(intent,1);

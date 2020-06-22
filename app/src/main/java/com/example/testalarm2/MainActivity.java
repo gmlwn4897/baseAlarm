@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void alarmUpdate(){
-        firebaseFirestore.collection("AlarmDemo").orderBy("hour",Query.Direction.ASCENDING).get()
+        firebaseFirestore.collection("AlarmDemo").orderBy("times",Query.Direction.ASCENDING).get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                                 ));
                             }
                             myAdapter = new MyAdapter(MainActivity.this, alarmList);
-                            myAdapter.setOnAlarmListener(onAlarmListener);
+                            //myAdapter.setOnAlarmListener(onAlarmListener);
                             recyclerView.setAdapter(myAdapter);
                             myAdapter.notifyDataSetChanged();
 
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    OnAlarmListener onAlarmListener = new OnAlarmListener() {//인터페이스인 OnPostListener를 가져와서 구현해줌
+  /*  OnAlarmListener onAlarmListener = new OnAlarmListener() {//인터페이스인 OnPostListener를 가져와서 구현해줌
         @Override
         public void onDelete(int position) {//MainAdapter에 넘겨주기 위한 메서드 작성
 
@@ -129,17 +129,17 @@ public class MainActivity extends AppCompatActivity {
         public void onModify(int position) {//여기서 수정하면 writepostActivity를 켜서 수정해주는코드
             myStartActivity(SettingAlarm.class,alarmList.get(position));
     }
-    };
+    };*/
     private void myStartActivity(Class c) {//게시물을 추가하는 경우 WritePostActivity 화면으로 넘겨주는 코드
         Intent intent = new Intent(this, c);
         startActivityForResult(intent, 1);
 }
 
-   private void myStartActivity(Class c, AlarmInfo alarmInfo){
+  /* private void myStartActivity(Class c, AlarmInfo alarmInfo){
         Intent intent = new Intent(this,c);
         intent.putExtra("alarmInfo", alarmInfo);
         startActivity(intent);
-    }
+    }*/
 
  /* public void deletebtn(View view){
         firebaseFirestore.collection("AlarmDemo").document("notificationId").delete()
